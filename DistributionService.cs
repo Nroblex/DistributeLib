@@ -29,6 +29,7 @@ namespace DistributeLib
             Method = "POST")]
         public bool UpgradeSoftware(GitUtilCommnad order)
         {
+            DistributeWorker distributeWorker = new DistributeWorker(order);
 
             return true;
         }
