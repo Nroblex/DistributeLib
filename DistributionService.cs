@@ -9,15 +9,17 @@ namespace DistributeLib
 {
     public class Distribute : IDistributeService
     {
-        [WebInvoke(Method ="GET",
-            ResponseFormat =WebMessageFormat.Json,
-            UriTemplate ="data/{id}")]
+        private GitUtilCommnad mGitUtilCommand;
+
+        [WebInvoke(Method = "GET",
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "data/{id}")]
         public Person GetPerson(string id)
         {
             return new Person()
             {
                 id = Convert.ToInt32(id),
-                name="Anders Selborn"
+                name = "Anders Selborn"
 
             };
         }
@@ -27,11 +29,32 @@ namespace DistributeLib
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
             Method = "POST")]
-        public bool UpgradeSoftware(GitUtilCommnad order)
+        public bool UpgradeSoftware(GitUtilCommnad command)
         {
-            DistributeWorker distributeWorker = new DistributeWorker(order);
+
+            //Task T = new Task(new Action(RunDistribute(order: order))).ContinueWith(OnDistributeFinished);
+            mGitUtilCommand = command;
+
+            DistributeWorker distributeWorker = new DistributeWorker(mGitUtilCommand);
+            
+            //Task T = new Task(new Action(DoRunDistribute));
+            //T.Start();
 
             return true;
+        }
+
+        private async Task DoRunDistribute()
+        {    
+
+            //await Task.Run( () => )
+
+
+
+        }
+
+        private void OnDistributeFinished(Task obj)
+        {
+            string r = "Distribute finished.";
         }
 
         public string GetValue(int value)
