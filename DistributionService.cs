@@ -10,7 +10,7 @@ namespace DistributeLib
     public class Distribute : IDistributeService
     {
         private GitUtilCommnad mGitUtilCommand;
-
+        DistributeManager distributeWorker =null;
         [WebInvoke(Method = "GET",
             ResponseFormat = WebMessageFormat.Json,
             UriTemplate = "data/{id}")]
@@ -35,23 +35,22 @@ namespace DistributeLib
             //Task T = new Task(new Action(RunDistribute(order: order))).ContinueWith(OnDistributeFinished);
             mGitUtilCommand = command;
 
-            DistributeWorker distributeWorker = new DistributeWorker(mGitUtilCommand);
-            
-            //Task T = new Task(new Action(DoRunDistribute));
-            //T.Start();
-
+            distributeWorker = new DistributeManager(mGitUtilCommand);
+            distributeWorker.eventFileZipped += BeginOnFileZipped;
+           
+          
             return true;
         }
 
-        private async Task DoRunDistribute()
-        {    
+        private void BeginOnFileZipped(object sender, EventArgs e)
+        {
+            ZipFileCreated myZipFile = (ZipFileCreated)e;
 
-            //await Task.Run( () => )
-
-
-
+            Console.WriteLine("My ZipFile was created, name = {0}, size = {1}", myZipFile.filePath, myZipFile.fileSize);
+            
         }
 
+       
         private void OnDistributeFinished(Task obj)
         {
             string r = "Distribute finished.";
