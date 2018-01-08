@@ -67,6 +67,7 @@
     <Compile Include="Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueueManager.cs" />
+    <Compile Include="SendZipFile.cs" />
     <Compile Include="ZipFileCreated.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -45,9 +45,11 @@ namespace DistributeLib
         private void BeginOnFileZipped(object sender, EventArgs e)
         {
             ZipFileCreated myZipFile = (ZipFileCreated)e;
-
             Console.WriteLine("My ZipFile was created, name = {0}, size = {1}", myZipFile.filePath, myZipFile.fileSize);
+
+            SendZipFile sendZipFile = new SendZipFile(myZipFile, mGitUtilCommand.ExternalFTPUser, mGitUtilCommand.ExternalFTPPassword);
             
+
         }
 
        
