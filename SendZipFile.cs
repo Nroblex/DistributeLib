@@ -21,42 +21,8 @@ namespace DistributeLib
             this.mGitutilCommand = gitUtilCommand;
             this.mZipFileCreated = zipFile;
             SendAsync();
-            //SendFTP();
         }
 
-
-        private void SendFTP()
-        {
-            FtpWebRequest ftpWebRequest;
-            try
-            {
-                
-                ftpWebRequest =(FtpWebRequest)WebRequest.Create(new Uri(string.Format(@"ftp://{0}/{1}",
-                    mGitutilCommand.ExternalFTPPath, new FileInfo(mGitutilCommand.CreatedZipFile).Name)));
-
-                ftpWebRequest.Method = WebRequestMethods.Ftp.UploadFile;
-                ftpWebRequest.UseBinary = true;
-                ftpWebRequest.UsePassive = true;
-                ftpWebRequest.KeepAlive = true;
-                ftpWebRequest.Credentials = new NetworkCredential(mGitutilCommand.ExternalFTPUser.Normalize(),
-                    mGitutilCommand.ExternalFTPPassword.Normalize());
-                
-                using (FileStream fs = File.OpenRead(mGitutilCommand.CreatedZipFile))
-                {
-                    byte[] buffer = new byte[fs.Length];
-                    fs.Read(buffer, 0, buffer.Length);
-                    fs.Close();
-                    Stream requestStream = ftpWebRequest.GetRequestStream();
-                    requestStream.Write(buffer, 0, buffer.Length);
-                    requestStream.Flush();
-                    requestStream.Close();
-                }
-            }
-            catch(Exception ep)
-            {
-                string error = ep.Message;
-            }
-        }
 
         private void SendAsync()
         {
@@ -68,33 +34,44 @@ namespace DistributeLib
                     mGitutilCommand.ExternalFTPPassword.Normalize());
 
                     myWebClient.UploadFileCompleted += OnFileUploadCompleted;
+                    myWebClient.UploadProgressChanged += OnProgressUpload;
                     
                     myWebClient.UploadFileAsync(new Uri(string.Format(@"ftp://{0}/{1}",
-                    mGitutilCommand.ExternalFTPPath, new FileInfo(mGitutilCommand.CreatedZipFile).Name)), "STOR", mZipFileCreated.filePath, Guid.NewGuid().ToString());
+                        mGitutilCommand.ExternalFTPPath, 
+                        new FileInfo(mGitutilCommand.CreatedZipFile).Name)), "STOR", mZipFileCreated.filePath, Guid.NewGuid().ToString());
                     
                     Uri tmp = new Uri(string.Format(@"ftp://{0}/{1}",
                     mGitutilCommand.ExternalFTPPath, new FileInfo(mGitutilCommand.CreatedZipFile).Name));
-
-
-                    String s = ";";
 
                 }
                 catch (Exception e)
                 {
                     string error = e.Message;
                 }
-
-                //long bytes = await Task.myWebClient.UploadFileTaskAsync("ftp://localhost", mZipFileCreated.filePath)
             }
+        }
+
+        private void OnProgressUpload(object sender, UploadProgressChangedEventArgs e)
+        {
+            Console.WriteLine("Sent {0} bytes of total {1}, percent = {2}", e.BytesSent, e.TotalBytesToSend, e.ProgressPercentage);
         }
 
         private void OnFileUploadCompleted(object sender, UploadFileCompletedEventArgs e)
         {
             if (e.Error != null)
             {
-                string err = e.Error.Message;
-
+                Console.WriteLine("There is a problem with the FTP transfer!");
+                Console.WriteLine("If you are using a FTP sevrer behind a NAT, make sure to allow port redirect in firewall");
+                Console.WriteLine();
+                Console.WriteLine("Press return to exit.");
             }
+            else
+            {
+                Console.WriteLine("File upload completed!");
+                Console.WriteLine();
+                Console.WriteLine("Press return to exit.");
+            }
+            
         }
     }
 }
