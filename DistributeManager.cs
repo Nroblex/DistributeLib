@@ -91,7 +91,7 @@ namespace DistributeLib
                 resultZip = new FileInfo(new DirectoryInfo(mGitUtilCommand.PathToBuild).Parent.FullName + "\\" + mGitUtilCommand.BuildNumber + ".zip");
             }
 
-
+            mGitUtilCommand.CreatedZipFile = resultZip.FullName;
             return new ZipFileCreated() { filePath = resultZip.FullName, fileSize = resultZip.Length };
         }
 

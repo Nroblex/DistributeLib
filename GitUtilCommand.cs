@@ -23,6 +23,9 @@ namespace DistributeLib
         public string PathToBuild { get; set; }
 
         [DataMember]
+        public string CreatedZipFile { get; set; }
+
+        [DataMember]
         public DateTime CreatedAt { get; set; }
 
 
