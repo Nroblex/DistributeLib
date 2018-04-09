@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DistributeLib
 {
-    public class Distribute : IDistributeService
+    public class Distribute : IDistributeService, IReply
     {
         private GitUtilCommnad mGitUtilCommand;
         DistributeManager distributeWorker =null;
@@ -61,6 +61,11 @@ namespace DistributeLib
         public string GetValue(int value)
         {
             return "You enetered " + value;
+        }
+
+        public void ServerAnswer()
+        {
+            Console.WriteLine("Server Ok.");
         }
     }
 }
